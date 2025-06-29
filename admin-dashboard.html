@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard - City Centre Garage</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <style>
+    .sidebar-toggle {
+      position: fixed;
+      top: 100px;
+      left: 0;
+      background-color: #002f6c;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+      font-size: 20px;
+      cursor: pointer;
+      z-index: 9999;
+    }
+
+    #showSidebarBtn {
+      display: none; 
+    }
+
+    .sidebar-toggle:hover {
+      background-color: #004080;
+    }
+
+    .sidebar.hidden {
+      display: none;
+    }
+
+    .admin-header {
+      background-color: #002f6c;
+      color: white;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .admin-header nav ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+    }
+
+    .admin-header nav ul li a {
+      color: white;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <header class="admin-header">
+    <h1>Admin Dashboard</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="#" onclick="logout()">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  
+  <button id="showSidebarBtn" class="sidebar-toggle" onclick="showSidebar()">➡</button>
+
+  <div class="dashboard-layout">
+   
+    <aside class="sidebar" id="adminSidebar">
+      <span class="close-btn" onclick="hideSidebar()">✖</span>
+      <img src="Apic.webp" alt="Admin Profile" class="profile-pic" />
+      <h2>Hello Admin</h2>
+      <p id="adminEmail">admin@example.com</p>
+      <button class="sidebar-btn" onclick="toggleSection('bookingSection')"> Bookings</button>
+      <button class="sidebar-btn" onclick="toggleSection('issuesSection')"> Customer Issues <span id="newBadge"></span></button>
+      <button class="sidebar-btn logout" onclick="logout()">Logout</button>
+    </aside>
+
+    <main class="dashboard-main">
+      <div class="card-row">
+        <div class="card" onclick="toggleSection('bookingSection')">
+          <h3><i class="fas fa-box"></i> Bookings</h3>
+          <p id="bookingCount">Total Bookings: 0</p>
+        </div>
+        <div class="card" onclick="toggleSection('issuesSection')">
+          <h3><i class="fas fa-tools"></i> Customer Issues <span id="newBadgeCard"></span></h3>
+          <p id="issueCount">Total Issues: 0</p>
+        </div>
+      </div>
+
+      <div class="result-panel hidden" id="bookingSection">
+        <h3>Customer Bookings</h3>
+        <div id="bookingList"></div>
+      </div>
+
+      <div class="result-panel hidden" id="issuesSection">
+        <h3>Customer Messages</h3>
+        <div id="issueList"></div>
+      </div>
+    </main>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 City Centre Garage |
+      <a href="privacy.html">Privacy Policy</a> |
+      <a href="terms.html">Terms of Service</a>
+    </p>
+  </footer>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem("loggedInUser"));
+    if (!user || user.role !== "admin") {
+      window.location.href = "login.html";
+    }
+    document.getElementById("adminEmail").textContent = user.email;
+
+    const bookings = JSON.parse(localStorage.getItem("customerBookings")) || [];
+    let messages = JSON.parse(localStorage.getItem("customerMessages")) || [];
+
+    document.getElementById("bookingCount").textContent = `Total Bookings: ${bookings.length}`;
+    document.getElementById("issueCount").textContent = `Total Issues: ${messages.length}`;
+
+    const newIssues = messages.filter(m => !m.response).length;
+    document.getElementById("newBadge").textContent = newIssues > 0 ? `🔴 ${newIssues}` : "";
+    document.getElementById("newBadgeCard").textContent = newIssues > 0 ? `🔴 ${newIssues}` : "";
+
+    let activeSection = null;
+    function toggleSection(sectionId) {
+      const section = document.getElementById(sectionId);
+      if (activeSection === sectionId) {
+        section.classList.add("hidden");
+        activeSection = null;
+      } else {
+        document.querySelectorAll(".result-panel").forEach(sec => sec.classList.add("hidden"));
+        section.classList.remove("hidden");
+        activeSection = sectionId;
+      }
+    }
+
+    function renderBookings() {
+      const container = document.getElementById("bookingList");
+      if (bookings.length === 0) {
+        container.innerHTML = "<p>No bookings available.</p>";
+        return;
+      }
+      container.innerHTML = bookings.map(b => `
+        <div class="admin-message-card">
+          <p><strong>Name:</strong> ${b.name}</p>
+          <p><strong>Date:</strong> ${b.date} | <strong>Time:</strong> ${b.time}</p>
+          <p><strong>Service:</strong> ${b.service} | <strong>Vehicle:</strong> ${b.vehicle}</p>
+          <p><strong>Status:</strong> ${b.status}</p>
+        </div>
+      `).join("");
+    }
+
+    function renderIssues() {
+      const container = document.getElementById("issueList");
+      if (messages.length === 0) {
+        container.innerHTML = "<p>No customer messages.</p>";
+        return;
+      }
+      container.innerHTML = messages.map((m, index) => `
+        <div class="admin-message-card">
+          <h4>${m.subject}</h4>
+          <p><strong>From:</strong> ${m.name} (${m.email})</p>
+          <p><strong>Message:</strong> ${m.message}</p>
+          ${m.response
+            ? `
+              <p><strong>Response:</strong> ${m.response}</p>
+              <button onclick="clearIssue(${index})" style="margin-top: 10px; background: #cc0000; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;">Clear</button>
+            `
+            : `
+              <textarea id="response-${index}" placeholder="Type your reply..." rows="3" style="width:100%; margin-top:10px;"></textarea>
+              <button onclick="respondToMessage(${index})" style="margin-top:10px;">Send Response</button>
+            `}
+        </div>
+      `).join("");
+    }
+
+    function respondToMessage(index) {
+      const textarea = document.getElementById(`response-${index}`);
+      const responseText = textarea.value.trim();
+      if (!responseText) {
+        alert("Please type your response before submitting.");
+        return;
+      }
+      messages[index].response = responseText;
+      localStorage.setItem("customerMessages", JSON.stringify(messages));
+      renderIssues();
+      updateBadges();
+    }
+
+    function clearIssue(index) {
+      if (confirm("Are you sure you want to delete this answered issue?")) {
+        messages.splice(index, 1);
+        localStorage.setItem("customerMessages", JSON.stringify(messages));
+        renderIssues();
+        updateBadges();
+      }
+    }
+
+    function updateBadges() {
+      const newUnread = messages.filter(m => !m.response).length;
+      document.getElementById("newBadge").textContent = newUnread > 0 ? `🔴 ${newUnread}` : "";
+      document.getElementById("newBadgeCard").textContent = newUnread > 0 ? `🔴 ${newUnread}` : "";
+      document.getElementById("issueCount").textContent = `Total Issues: ${messages.length}`;
+    }
+
+    function hideSidebar() {
+      document.getElementById("adminSidebar").classList.add("hidden");
+      document.getElementById("showSidebarBtn").style.display = "block"; // 👈 show toggle button
+    }
+
+    function showSidebar() {
+      document.getElementById("adminSidebar").classList.remove("hidden");
+      document.getElementById("showSidebarBtn").style.display = "none"; // 👈 hide toggle button again
+    }
+
+    function logout() {
+      if (confirm("Are you sure you want to log out?")) {
+        localStorage.removeItem("loggedInUser");
+        window.location.href = "login.html";
+      }
+    }
+
+    renderBookings();
+    renderIssues();
+  </script>
+</body>
+</html>

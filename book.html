@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment - City Centre Garage</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+    <div class="header-container">
+        <h1>City Centre Garage</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="book.html" class="active">Book Appointment</a></li>
+              
+                <li><a href="contact.html">Contact Us</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="login.html">Login</a></li>
+                
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+ <section class="form-header">
+  <div class="form-header-box">
+    <h2>Book an Appointment</h2>
+    <p>
+      Please fill in the form below to schedule a service with our expert mechanics. <br />
+      <strong>All prices are VAT exclusive.</strong>
+    </p>
+  </div>
+ </section>
+
+
+
+    <section class="booking-form-section">
+        <form id="bookingForm" class="booking-form">
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" required>
+
+            <label for="email">Email Address:</label>
+            <input type="email" id="email" required>
+
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" required>
+
+            <label for="vehicle">Vehicle Type:</label>
+            <select id="vehicle" required>
+                <option value="">-- Select --</option>
+                <option value="SUV">SUV</option>
+                <option value="Minibus">Minibus</option>
+                <option value="Convertible">Convertible</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label for="service">Service Required:</label>
+            <select id="service" required>
+                <option value="">-- Select --</option>
+                <option value="Health Check">Health Check</option>
+                <option value="General Service">General Service</option>
+                <option value="Minor Repair">Minor Repair</option>
+                <option value="Major Repair">Major Repair</option>
+                <option value="MOT">MOT</option>
+            </select>
+
+            <label for="date">Preferred Date:</label>
+            <input type="date" id="date" required>
+
+            <label for="time">Preferred Time:</label>
+            <input type="time" id="time" required>
+
+            <label for="notes">Additional Notes:</label>
+            <textarea id="notes" rows="4" placeholder="Describe any specific issues or requests..."></textarea>
+
+            <p><strong>Estimated Price: <span id="priceDisplay" style="color: green;">£0.00</span></strong></p>
+
+
+            <button type="submit">Submit Booking</button>
+        </form>
+    </section>
+</main>
+
+<footer>
+    <p>&copy; 2025 City Centre Garage | <a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms of Service</a></p>
+</footer>
+
+<!-- Booking Summary Modal -->
+<div id="summaryModal" style="display:none; position:fixed; top:10%; left:50%; transform:translateX(-50%);
+background:white; border-radius:10px; padding:20px; box-shadow:0 0 20px rgba(0,0,0,0.2); z-index:1000; max-width:90%; width:400px;">
+    <h3>Booking Summary</h3>
+    <div id="summaryContent"></div>
+    <button onclick="document.getElementById('summaryModal').style.display='none'">Close</button>
+</div>
+
+<script>
+// ----- Pricing Table -----
+const prices = {
+    SUV: { "Minor Repair": 450, "Major Repair": 1200, "General Service": 200, "Health Check": 100 },
+    Minibus: { "Minor Repair": 550, "Major Repair": 1500, "General Service": 350, "Health Check": 150 },
+    Convertible: { "Minor Repair": 100, "Major Repair": 800, "General Service": 150, "Health Check": 50 },
+    Other: { "Minor Repair": 200, "Major Repair": 1000, "General Service": 150, "Health Check": 70 },
+    MOT: 40
+};
+
+// ----- Dynamic Service Options -----
+function updateServiceOptions() {
+    const vehicle = document.getElementById("vehicle").value;
+    const serviceSelect = document.getElementById("service");
+    const options = ["Health Check", "General Service", "Minor Repair", "Major Repair", "MOT"];
+
+    serviceSelect.innerHTML = '<option value="">-- Select --</option>';
+    options.forEach(service => {
+        let label = service;
+        if (service === "MOT") {
+            label += ` (£${prices.MOT})`;
+        } else if (vehicle && prices[vehicle] && prices[vehicle][service]) {
+            label += ` (£${prices[vehicle][service]})`;
+        }
+        const opt = document.createElement("option");
+        opt.value = service;
+        opt.textContent = label;
+        serviceSelect.appendChild(opt);
+    });
+}
+
+// ----- Price Calculation -----
+function updatePrice() {
+    const vehicle = document.getElementById("vehicle").value;
+    const service = document.getElementById("service").value;
+    const date = new Date(document.getElementById("date").value);
+    let price = 0;
+
+    if (vehicle && service) {
+        price = service === "MOT" ? prices.MOT : (prices[vehicle]?.[service] || 0);
+        if (date.getDay() === 6) price += price * 0.5 + 50;
+    }
+
+    document.getElementById("priceDisplay").textContent = `£${price.toFixed(2)}`;
+    return price;
+}
+
+// ----- Block Unavailable Dates -----
+document.getElementById("date").addEventListener("input", () => {
+    updatePrice();
+    suggestNextAvailableTime();
+});
+
+// ----- Block Weekends -----
+document.getElementById("date").setAttribute("min", new Date().toISOString().split("T")[0]);
+
+document.getElementById("date").addEventListener("change", () => {
+    const dateInput = new Date(document.getElementById("date").value);
+    const day = dateInput.getDay();
+    if (day === 0 || day === 6) {
+        alert("Sorry, we are closed on weekends. Please choose a weekday.");
+        document.getElementById("date").value = "";
+        document.getElementById("time").value = "";
+    }
+});
+
+// ----- Suggest Next Available Time Slot -----
+function suggestNextAvailableTime() {
+    const date = document.getElementById("date").value;
+    if (!date) return;
+
+    const bookings = JSON.parse(localStorage.getItem("customerBookings")) || [];
+    const bookedTimes = bookings.filter(b => b.date === date).map(b => b.time);
+    let suggested = "";
+
+    for (let h = 9; h < 18; h++) {
+        const time = `${h.toString().padStart(2, "0")}:00`;
+        if (!bookedTimes.includes(time)) {
+            suggested = time;
+            break;
+        }
+    }
+
+    if (suggested) {
+        document.getElementById("time").value = suggested;
+    } else {
+        alert("Sorry, this day is fully booked. Please choose another date.");
+        document.getElementById("time").value = "";
+    }
+}
+
+
+document.getElementById("vehicle").addEventListener("change", () => {
+    updateServiceOptions();
+    updatePrice();
+});
+document.getElementById("service").addEventListener("change", updatePrice);
+
+document.getElementById("bookingForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const date = document.getElementById("date").value;
+    const time = document.getElementById("time").value;
+    const name = document.getElementById("name").value.trim();
+    const hour = parseInt(time.split(":")[0]);
+    const weekday = new Date(date).getDay();
+
+    if (!date || !time) return alert("Please select a valid date and time.");
+
+    if (weekday === 0 || hour < 9 || hour >= 18) {
+        alert("Sorry, we are not available in that time.");
+        return;
+    }
+
+    const bookings = JSON.parse(localStorage.getItem("customerBookings")) || [];
+    const isTaken = bookings.some(b => b.date === date && b.time === time);
+    if (isTaken) {
+        alert("Sorry, the appointment in that time is already booked.");
+        return;
+    }
+
+    const booking = {
+        name,
+        email: document.getElementById("email").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        vehicle: document.getElementById("vehicle").value,
+        service: document.getElementById("service").value,
+        date,
+        time,
+        notes: document.getElementById("notes").value.trim(),
+        status: "Pending"
+    };
+
+    bookings.push(booking);
+    localStorage.setItem("customerBookings", JSON.stringify(bookings));
+
+    const price = updatePrice();
+    document.getElementById("summaryContent").innerHTML = `
+        <h4>Booking Summary</h4>
+        <p><strong>Name:</strong> ${booking.name}</p>
+        <p><strong>Email:</strong> ${booking.email}</p>
+        <p><strong>Phone:</strong> ${booking.phone}</p>
+        <p><strong>Vehicle:</strong> ${booking.vehicle}</p>
+        <p><strong>Service:</strong> ${booking.service}</p>
+        <p><strong>Date:</strong> ${booking.date}</p>
+        <p><strong>Time:</strong> ${booking.time}</p>
+        <p><strong>Estimated Price:</strong> £${price.toFixed(2)}</p>
+    `;
+
+    document.getElementById("summaryModal").style.display = "block";
+    document.getElementById("bookingForm").reset();
+    document.getElementById("priceDisplay").textContent = "£0.00";
+    document.getElementById("service").innerHTML = '<option value="">-- Select --</option>';
+});
+</script>
+
+
+
+</body>
+</html>
+

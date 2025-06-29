@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us - City Centre Garage</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <h1>City Centre Garage</h1>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="book.html">Book Appointment</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="about.html" class="active">About Us</a></li>
+          <li><a href="login.html">Login</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="about-intro reveal">
+     <div class="about-intro-overlay">
+       <h2>About City Centre Garage</h2>
+       <p>
+      Founded in 2005, City Centre Garage has been a trusted name in vehicle servicing and MOT testing in Birmingham.
+      Our mission is to provide honest, efficient, and top-quality automotive care for every customer, every time.
+       </p>
+     </div>
+    </section>
+
+
+    <section class="about-values reveal">
+      <h3>Our Values</h3>
+      <ul>
+        <li><strong>Integrity:</strong> We believe in transparent pricing and honest service.</li>
+        <li><strong>Expertise:</strong> Our team consists of certified mechanics with years of experience.</li>
+        <li><strong>Customer First:</strong> Your safety and satisfaction are our top priorities.</li>
+        <li><strong>Innovation:</strong> We continuously adopt new technologies to serve you better.</li>
+      </ul>
+    </section>
+
+    <section class="about-impact reveal">
+      <h3>Our Impact in the Market</h3>
+      <p>
+        We’ve proudly served over 5,000 customers, delivered thousands of successful MOT tests, and partnered with corporate
+        fleets. By offering quick turnaround times, flexible bookings, and competitive pricing, we set the benchmark for
+        modern garages in the West Midlands.
+      </p>
+    </section>
+
+    <section class="about-location reveal">
+      <h3>Visit Our Garage</h3>
+      <p>
+        We're located right in the heart of Birmingham. Click the button below to view us on Google Maps.
+      </p>
+      <a href="https://www.google.com/maps/place/Birmingham,+UK" target="_blank" class="map-button">📍 View on Google Maps</a>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 City Centre Garage |
+      <a href="privacy.html">Privacy Policy</a> |
+      <a href="terms.html">Terms of Service</a></p>
+  </footer>
+
+  <!-- Scroll reveal animation script (safe without slideshow) -->
+  <script>
+    const reveals = document.querySelectorAll(".reveal");
+    window.addEventListener("scroll", () => {
+      for (let section of reveals) {
+        const windowHeight = window.innerHeight;
+        const elementTop = section.getBoundingClientRect().top;
+        if (elementTop < windowHeight - 50) {
+          section.classList.add("active");
+        }
+      }
+    });
+  </script>
+</body>
+</html>

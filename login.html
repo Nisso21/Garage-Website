@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - City Centre Garage</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <h1>City Centre Garage</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="book.html">Book Appointment</a></li>
+                   
+                    <li><a href="contact.html">Contact Us</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="login.html" class="active">Login</a></li>
+                    
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+     <section class="form-header">
+      <div class="form-header-box">
+        <h2>Secure Login</h2>
+        <p>
+      Admins can respond to customer messages.<br>
+      Mechanics can post availability schedules.
+        </p>
+      </div>
+     </section>
+
+
+        <section class="login-form-section">
+            <form id="loginForm" class="login-form">
+                <label for="role">I am a:</label>
+                <select id="role" required>
+                    <option value="">-- Select Role --</option>
+                    <option value="admin">Admin</option>
+                    <option value="mechanic">Mechanic</option>
+                </select>
+
+                <label for="email">Email Address:</label>
+                <input type="email" id="email" required>
+
+                <label for="password">Password:</label>
+                <input type="password" id="password" required>
+
+                <button type="submit">Login</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 City Centre Garage | <a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms of Service</a></p>
+    </footer>
+
+    
+    <script>
+        
+        const users = [
+            { email: "admin@example.com", password: "admin123", role: "admin" },
+            { email: "mechanic@example.com", password: "mech123", role: "mechanic" }
+        ];
+
+        document.getElementById("loginForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const role = document.getElementById("role").value;
+
+            const user = users.find(u => u.email === email && u.password === password && u.role === role);
+
+            if (user) {
+                localStorage.setItem("loggedInUser", JSON.stringify(user));
+
+                
+                if (role === "admin") {
+                    window.location.href = "admin-dashboard.html";
+                } else {
+                    window.location.href = "mechanic-dashboard.html";
+                }
+            } else {
+                alert("Invalid credentials or role.");
+            }
+        });
+    </script>
+</body>
+</html>
+
+

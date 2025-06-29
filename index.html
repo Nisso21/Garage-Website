@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Centre Garage - Home</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+      <div class="header-container">
+          <h1>City Centre Garage</h1>
+          <nav>
+              <ul>
+                  <li><a href="index.html">Home</a></li>
+                  <li><a href="services.html">Services</a></li>
+                  <li><a href="book.html">Book Appointment</a></li>
+                  
+                  <li><a href="contact.html">Contact Us</a></li>
+                  <li><a href="about.html">About Us</a></li>
+                  <li><a href="login.html">Login</a></li>
+                  
+              </ul>
+          </nav>
+      </div>
+  </header>
+
+
+    <main>
+        <section class="welcome" style="background-image: url('HPic.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; padding: 60px 20px;">
+
+          <div class="welcome-box">
+             <h2>Reliable Care for Your Car</h2>
+             <p>
+                Welcome to <strong>City Centre Garage</strong> – your trusted destination for MOT testing, car servicing, and expert vehicle repairs. 
+                We’re dedicated to keeping you safe on the road with honest advice and professional service.
+             </p>
+          </div>
+        </section>
+
+
+        <section class="cards">
+            <div class="card">
+                <h3><a href="services.html">Services</a></h3>
+                <p>Explore the full range of services we offer by vehicle type and service category.</p>
+            </div>
+            <div class="card">
+                <h3><a href="book.html">Book Appointment</a></h3>
+                <p>Schedule your service based on mechanic availability and working hours.</p>
+            </div>
+            <div class="card">
+                <h3><a href="contact.html">Contact Us</a></h3>
+                <p>Send us your questions or service requests and we will respond promptly.</p>
+            </div>
+        </section>
+
+        <section class="feedback">
+            <h2>What Our Customers Say</h2>
+            <div class="testimonials">
+                <div class="testimonial">
+                    <p>“Great service, fast and friendly staff. Got my MOT done in less than an hour!”</p>
+                    <span>⭐⭐⭐⭐⭐ – Sarah J.</span>
+                </div>
+                <div class="testimonial">
+                    <p>“Very professional and honest. Helped me understand my repair options clearly.”</p>
+                    <span>⭐⭐⭐⭐ – David K.</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="faq">
+            <h2>Frequently Asked Questions</h2>
+            <div class="question">
+                <h4>What are your opening hours?</h4>
+                <p>We are open Monday to Friday from 9:00 AM to 6:00 PM. Saturday services are by appointment only.</p>
+            </div>
+            <div class="question">
+                <h4>Do you offer same-day bookings?</h4>
+                <p>Yes, depending on mechanic availability. We recommend booking online in advance to ensure your preferred time.</p>
+            </div>
+            <div class="question">
+                <h4>Can I get a quotation before visiting?</h4>
+                <p>Yes! Use our quotation page to get an estimated cost based on your vehicle and service needs.</p>
+            </div>
+        </section>
+
+        <section class="achievements">
+            <h2>Our Achievements</h2>
+            <ul>
+                <li>👑 Voted “Best Local Garage” in Birmingham – 2023</li>
+                <li>✔ Over 5,000 successful MOT tests completed</li>
+                <li>🌟 4.8/5 average customer rating on Google</li>
+                <li>🔧 Partnered with 10+ major fleet vehicle services</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 City Centre Garage | <a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms of Service</a></p>
+    </footer>
+
+    <script>
+        let slideIndex = 0;
+        showSlides();
+
+        function showSlides() {
+            let i;
+            let slides = document.getElementsByClassName("slides");
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            slideIndex++;
+            if (slideIndex > slides.length) { slideIndex = 1; }
+            slides[slideIndex - 1].style.display = "block";
+            setTimeout(showSlides, 3000);
+        }
+    </script>
+</body>
+</html>
+

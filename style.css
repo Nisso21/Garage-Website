@@ -1962,5 +1962,76 @@ footer a {
   border-radius: 12px;
   margin-bottom: 30px;
 }
+@media (max-width: 768px) {
+  .header-container nav ul {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+  }
+
+  .welcome-box,
+  .form-header-box,
+  .booking-form,
+  .contact-form,
+  .quotation-form,
+  .login-form {
+    padding: 20px;
+    width: 100%;
+  }
+
+  .service-card,
+  .card,
+  .testimonial,
+  .admin-message-card,
+  .dashboard-card {
+    width: 90%;
+  }
+
+  .card-container,
+  .cards,
+  .testimonials,
+  .card-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .services-table table {
+    font-size: 0.9em;
+    width: 100%;
+  }
+
+  .dashboard-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-radius: 0;
+  }
+
+  .dashboard-main {
+    padding: 20px;
+  }
+
+  .result-panel {
+    padding: 15px;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .admin-header nav ul {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .admin-header h1 {
+    font-size: 1.6rem;
+  }
+}
 
 
